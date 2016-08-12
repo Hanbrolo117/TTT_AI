@@ -28,4 +28,4 @@ to use this codebase to implement your own Java Tic Tac Toe game and throw a UI 
                ********************
 
 
-T^3 AI Powered By Cups of coffee
+T^3 AI Powered By Cups of coffee 
