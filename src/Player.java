@@ -12,6 +12,7 @@ public class Player {
     private int initI;
     private int initJ;
     private boolean isFirstMove;
+    private int moves;
 
 
 
@@ -31,6 +32,7 @@ public class Player {
         this.isFirstMove = true;
         this.initI = 1;
         this.initJ = 1;
+        this.moves=0;
     }
 
     /**
@@ -57,6 +59,8 @@ public class Player {
      * @param board the current state of the game board (a 3x3 integer Matrix)
      */
     public void playerMove(int[][] board){
+
+        //This is for All cases testing purposes
         if((this.hasInitPos) && (board[this.initI][this.initJ] == -1)){
             if(this.isFirstMove) {
                 board[this.initI][this.initJ] = this.getPlayerToken();
@@ -73,11 +77,13 @@ public class Player {
                 if(board[i][j] == -1){
                     board[i][j] = this.playerToken;
                     if(this.isWin(board,this.playerToken)){
+                        this.moves++;
                         return;
                     }else{
                         board[i][j] = this.opponentToken;
                         if(this.isWin(board,this.opponentToken)){
                             board[i][j] = this.playerToken;
+                            this.moves++;
                             return;
                         }else{
                             board[i][j] = -1;
@@ -89,19 +95,31 @@ public class Player {
             }
         }
 
-        if(board[1][1] == -1){
-            board[1][1] = this.getPlayerToken();
+        //Tic Tac Toe Techniques:
+
+        //Special Case 1: Inital Move, all possible cells have same winning potential at this point.
+        if((board[1][2]==this.getOpponentToken())&&(this.moves==0)&&(board[0][2]==-1)){
+            this.moves++;
+            board[0][2] = this.playerToken;
             return;
         }
-        MovePoint best = mps.get(0);
 
+        //Attempt to take control of Board:
+        if(board[1][1] == -1){
+            board[1][1] = this.getPlayerToken();
+            this.moves++;
+            return;
+        }
+
+        //Otherwise Choose the best potential point on the board to win as soon as possible:
+        MovePoint best = mps.get(0);
         for(int i=0; i < mps.size(); i++ ){
             if(mps.get(i).getValue() > best.getValue()){
                 best = mps.get(i);
             }
         }
 
-
+        this.moves++;//Increment Moves
         board[best.getI()][best.getJ()] = this.playerToken;
     }
 
@@ -151,28 +169,24 @@ public class Player {
     //---------------------------------------------------------------------------------------------------
     /**
      * Determine whether a given player wins on a given game Board (3x3 matrix)
-     * @param table the current state of the game board (3x3 matrix)
+     * @param board the current state of the game board (3x3 matrix)
      * @param plyr the integer token the player is represented by
      * @return boolean whether the given player has won on the given game board (3x3 matrix)
      */
-    public boolean isWin(int[][] table, int plyr){
-        for(int i=0; i < 3; i++){
-            if(table[1][i] == plyr) {
-                if (i == 0 || i == 2) {
-                    if (table[0][i] == plyr && table[2][i] == plyr)
-                        return true;
-                } else {
-                    if( (table[0][i-1] == plyr && table[2][i+1] == plyr)
-                            || (table[0][i+1] == plyr && table[2][i-1]==plyr)
-                            || (table[1][i-1]==plyr && table[1][i+1]==plyr))
-                        return true;
-                }
-            }
-            if((i==1) && ((table[0][i-1]==plyr && table[0][i]==plyr && table[0][i+1]==plyr)
-                    ||(table[2][i-1]==plyr && table[2][i]==plyr&&table[2][i+1]==plyr) ))
-                return true;
+    public boolean isWin(int[][] board, int plyr){
+        if( ((board[0][0]==plyr)&&(board[0][1]==plyr)&&(board[0][2]==plyr))
+        || ((board[1][0]==plyr)&&(board[1][1]==plyr)&&(board[1][2]==plyr))
+        || ((board[2][0]==plyr)&&(board[2][1]==plyr)&&(board[2][2]==plyr)))
+            return true;
 
-        }
+        if( ((board[0][0]==plyr)&&(board[1][0]==plyr)&&(board[2][0]==plyr))
+                || ((board[0][1]==plyr)&&(board[1][1]==plyr)&&(board[2][1]==plyr))
+                || ((board[0][2]==plyr)&&(board[1][2]==plyr)&&(board[2][2]==plyr)))
+            return true;
+
+        if( ((board[0][0]==plyr)&&(board[1][1]==plyr)&&(board[2][2]==plyr))
+                || ((board[2][0]==plyr)&&(board[1][1]==plyr)&&(board[0][2]==plyr)))
+            return true;
         return false;
     }
 

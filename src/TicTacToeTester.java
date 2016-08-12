@@ -27,6 +27,11 @@ public class TicTacToeTester {
                         p2.playerMove(board);
                         turn = 1;
                     }
+
+                    if((i==1) && (j==2)){
+                        printXOBoard(board);
+                        System.out.println();
+                    }
                     if(p1.isWin(board,p1.getPlayerToken())){
                         p1win++;
                         player1Win = true;
